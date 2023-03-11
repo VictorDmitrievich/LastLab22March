@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8">
+        <title>Асинхронные функции</title>
+        <style>
+            #video {
+                width: 100%;
+            }
+            
+            .buttons {
+                padding: 5px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <video id="video" src="video-example-1.mp4" controls></video>
+        <button id="play">Play</button>
+        <button id="pause">Pause</button>
+    <script>
+        let video = document.getElementById("video");
+        let playButton = document.getElementById("play");
+        let pauseButton = document.getElementById("pause");
+        let delay = Math.random()*10000; 
+        
+
+        let play = () => video.play();
+        let pause = () => DelayedPause(); 
+
+        playButton.addEventListener("click", play); 
+        pauseButton.addEventListener("click", pause);
+
+        async function DelayedPause() {
+            let promise = new Promise((resolve, reject) => {
+                setTimeout(() => video.pause(), delay)
+            });
+            await promise
+        }
+    </script>
+    </body>
+</html>

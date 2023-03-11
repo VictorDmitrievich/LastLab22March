@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>компоненты Vue</title>
+		<script src="https://unpkg.com/vue@next"></script>
+	</head>
+	<body>
+		<!-- HTML -->
+		<div id="app">
+			<h1>Магазин товаров</h1>
+			<div class="productsWrapper">
+				<Product
+					v-for="product in products"
+					:key="product.id"
+					:title="product.title"
+					:price="product.price"
+					:photo="product.imageUrl"
+					:cart="cart"
+					@add="onAddToCart"
+				></Product>
+			</div>
+			<Cart class="cart" :cart="cart"/>
+		</div>
+
+		<script>
+			const Shop = {
+				data() {
+					return {
+						cart: [],
+						products: [
+							{
+								id: 0,
+								title: "Кресло - The 1972 Impala chair",
+								imageUrl:
+									"https://media.gq.com/photos/5f1870b9f938b85f0025fc91/master/w_1600,c_limit/vintage-ikea-gq-august-2020-13.jpg",
+								price: 590,
+							},
+							{
+								id: 1,
+								title: 'Этажерка "Роскуг"',
+								imageUrl:
+									"https://wsjournal.ru/wp-content/uploads/2019/04/t2b-1.jpg",
+								price: 327,
+							},
+						]
+					};
+				},
+				methods: {
+					onAddToCart(product) {
+						this.cart.push(product);
+					}
+				}
+			};
+			const app = Vue.createApp(Shop);
+
+			// Компонент Product
+			app.component('Product', {
+				props: ['title', 'photo', 'price'],
+				computed: {
+					priceComputed() {
+						return `$${this.price} (${this.price * 74} руб.)`
+					}
+				},
+				template: `
+					<div>
+						<h2> {{ title }} </h2>
+						<img :src=photo :alt=title />
+						<p>Цена: {{ priceComputed }}</p>
+						<button v-on:click="addToCart">Добавить в корзину</button>
+					</div>
+				`,
+				methods: {
+					addToCart() {
+						this.$emit('add', {
+							product: {
+								title: this.title,
+								price: this.price
+							}
+						})
+					}
+				}
+			});
+			// Компонент Cart
+			app.component('Cart', {
+				props: ['cart'],
+				computed: {
+					cartOutput() {
+						return this.cart.length;
+					}
+				},
+				template: `
+					<button>
+						<span>Корзина - ({{ cartOutput }})</span>
+					</button>
+				`
+			})
+			app.mount("#app");
+		</script>
+
+		<style>
+			*,
+			*::after,
+			*::before {
+				box-sizing: border-box;
+			}
+			body {
+				padding: 15px 5vw;
+				position: relative;
+			}
+			h1 {
+				margin-bottom: 3rem;
+			}
+			h2 {
+				margin-bottom: 1.5rem;
+			}
+			p {
+				margin-top: 0;
+				margin-bottom: 0.6rem;
+			}
+			img {
+				display: block;
+				margin-bottom: 1.5rem;
+				border-radius: 5px;
+				width: 500px;
+				height: 350px;
+				object-fit: cover;
+			}
+			.productsWrapper {
+				display: grid;
+				gap: 30px;
+				grid-template-columns: 1fr 1fr auto;
+			}
+			.cart {
+				position: absolute;
+				right: 40px;
+				top: 40px;
+				background-color: #fafafa;
+				padding: 0.6rem 1.3rem;
+				border-radius: 10px;
+				box-shadow: 3px 2px 4px rgba(0, 0, 0, 0.35);
+				cursor: pointer;
+			}
+		</style>
+	</body>
+</html>
